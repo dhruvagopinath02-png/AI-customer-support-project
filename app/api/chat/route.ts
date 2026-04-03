@@ -1,9 +1,17 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Force Node.js runtime on Vercel
+export const runtime = 'nodejs';
+export const maxDuration = 30;
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function POST(req: NextRequest) {
+  if (!process.env.GEMINI_API_KEY) {
+    return NextResponse.json({ error: 'GEMINI_API_KEY is not configured on the server.' }, { status: 500 });
+  }
+
   try {
     const { prompt, context } = await req.json();
 
